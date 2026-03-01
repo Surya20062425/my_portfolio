@@ -675,9 +675,91 @@
                 }
             });
         });
+        // ==========================================
+// EMAILJS CONFIGURATION - REPLACE THESE!
+// ==========================================
+
+// Step 1: Sign up at https://www.emailjs.com/
+// Step 2: Add Gmail Service and get Service ID
+// Step 3: Create Email Template and get Template ID
+// Step 4: Get your Public Key from Account settings
+
+const EMAILJS_CONFIG = {
+    PUBLIC_KEY: 'hdKG_iuwipmRNrdH7',      // Replace with your EmailJS Public Key
+    SERVICE_ID: 'service_i9bzuvl',      // Replace with your EmailJS Service ID  
+    TEMPLATE_ID: 'template_jwx881b'     // Replace with your EmailJS Template ID
+};
+
+// Initialize EmailJS
+(function() {
+    // Only initialize if keys are provided
+    if (EMAILJS_CONFIG.PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+        emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+    }
+})();
+
+// Form Handling
+const contactForm = document.getElementById('contact-form');
+const submitBtn = document.getElementById('submit-btn');
+const formStatus = document.getElementById('form-status');
+
+contactForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    // Check if EmailJS is configured
+    if (EMAILJS_CONFIG.PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+        showStatus('⚠️ Please configure EmailJS first. See instructions in the code comments.', 'error');
+        return;
+    }
+
+    // Loading state
+    submitBtn.classList.add('sending');
+    submitBtn.disabled = true;
+    hideStatus();
+
+    // Get form data
+    const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        subject: document.getElementById('subject').value,
+        message: document.getElementById('message').value,
+        to_email: 'b.7993974026@gmail.com'
+    };
+
+    // Send email using EmailJS
+    emailjs.send(EMAILJS_CONFIG.SERVICE_ID, EMAILJS_CONFIG.TEMPLATE_ID, formData)
+        .then(function(response) {
+            console.log('SUCCESS!', response.status, response.text);
+            showStatus('✅ Message sent successfully! I\'ll get back to you soon.', 'success');
+            contactForm.reset();
+        })
+        .catch(function(error) {
+            console.log('FAILED...', error);
+            showStatus('❌ Failed to send message. Please try again or email me directly at b.7993974026@gmail.com', 'error');
+        })
+        .finally(function() {
+            submitBtn.classList.remove('sending');
+            submitBtn.disabled = false;
+            
+            // Hide status after 5 seconds
+            setTimeout(hideStatus, 5000);
+        });
+});
+
+function showStatus(message, type) {
+    formStatus.textContent = message;
+    formStatus.className = 'form-status ' + type;
+    formStatus.style.display = 'block';
+}
+
+function hideStatus() {
+    formStatus.className = 'form-status';
+    formStatus.style.display = 'none';
+}
     </script>
 </body>
 
 </html>
+
 
 
